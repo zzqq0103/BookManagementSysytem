@@ -1,0 +1,52 @@
+{% extends "book/base.html" %}
+{% load staticfiles %}
+{% block title %}添加图书{% endblock %}
+
+{% block content %}
+<div class="container">
+        <div class="col-md-10 col-md-offset-2">
+          <form class='form-register' action="/add_book/" method="post">
+
+              {% if message %}
+                  <div class="alert alert-warning">{{ message }}</div>
+              {% endif %}
+
+              {% csrf_token %}
+
+              <h2 class="text-center">添加图书</h2>
+              <div class="form-group">
+                  {{ add_book_form.book_name.label_tag }}
+                  {{ add_book_form.book_name}}
+              </div>
+              <div class="form-group">
+                  {{ add_book_form.book_author.label_tag }}
+                  {{ add_book_form.book_author }}
+              </div>
+              <div class="form-group">
+                  {{ add_book_form.book_press.label_tag }}
+                  {{ add_book_form.book_press }}
+              </div>
+              <div class="form-group">
+                  {{ add_book_form.book_num.label_tag }}
+                  {{ add_book_form.book_num }}
+              </div>
+              <div class="form-group">
+                  {{ add_book_form.book_sort.label_tag }}
+                  {{ add_book_form.book_sort }}
+              </div>
+              <div class="form-group">
+                  {{ add_book_form.book_recore.label_tag }}
+                  {{ add_book_form.book_recore }}
+              </div>
+              <div class="form-group">
+                  {{ add_book_form.book_publish_date.label_tag }}
+                  {{ add_book_form.book_publish_date }}
+              </div>
+
+              <button type="reset" class="btn btn-default pull-left">重置</button>
+              <button type="submit" class="btn btn-primary pull-right">提交</button>
+
+          </form>
+        </div>
+    </div> <!-- /container -->
+{% endblock %}
