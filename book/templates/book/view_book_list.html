@@ -30,7 +30,7 @@
                             <th>图书分类</th>
                             <th>图书入库日期</th>
                             <th>图书出版日期</th>
-                            {% if not requset.session.permission %}
+                            {% if requset.session.permission == 0 %}
                             <th>借书操作</th>
                             {% endif %}
                         </tr>
@@ -46,7 +46,7 @@
                                 <td>{{ book.booksort }}</td>
                                 <td>{{ book.bookrecore }}</td>
                                 <td>{{ book.bookpublishdate|date:"Y-m-d" }}</td>
-                                {% if not requset.session.permission %}
+                                {% if requset.session.permission == 0 %}
                                 <td><a class="btn primary-btn">借书</a></td>
                                 {% endif %}
                             </tr>

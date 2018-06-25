@@ -4,32 +4,24 @@
 
 {% block content %}
 
-   <div class="container">
+    <div class="container">
 
         <div class="row">
 
-            <div class="col-md-8 col-md-offset-2">
-
-                    <div class="col-md-4 col-md-offset-8">
-                        <form role="form" method="post" name="search_form">
-                            {% csrf_token %}
-                            <input type="search" class="form-control" name="keyword"
-                                   placeholder="键入图书名称搜索" id="id_search_input" onkeyup="key_up()"
-                                   autofocus>
-                        </form>
-                    </div>
+            <div class="col-md-12">
 
                     <table class="table table-hover">
                         <thead>
                         <tr>
                             <th>#</th>
+                            <th>图书编号</th>
                             <th>图书名称</th>
                             <th>图书作者</th>
                             <th>图书出版社</th>
-                            <th>图书库存</th>
+                            <th>图书数量</th>
                             <th>图书分类</th>
-                            <th>图书入库日期</th>
-                            <th>图书出版日期</th>
+                            <th>图书入库时间</th>
+                            <th>图书出版时间</th>
                             <th>删除操作</th>
                         </tr>
                         </thead>
@@ -37,42 +29,43 @@
                         {% for book in book_list %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ book.bookname }}</a></td>
+                                <td>{{ book.bookid }}</td>
+                                <td>{{ book.bookname }}</td>
                                 <td>{{ book.bookauthor }}</td>
                                 <td>{{ book.bookpress }}</td>
                                 <td>{{ book.booknum }}</td>
                                 <td>{{ book.booksort }}</td>
                                 <td>{{ book.bookrecore }}</td>
-                                <td>{{ book.bookpublishdate|date:"Y-m-d" }}</td>
-                                <td><a class="btn primary-btn">删除</a></td>
+                                <td>{{ book.bookpublishdate }}</td>
+                                <td><a class="btn btn-block btn-danger" href="?bookid={{ book.bookid }}">删除</a></td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td>暂无图书</td>
+                                <td>无图书</td>
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
 
-                    <nav>
-                        <ul class="pager">
-                            {% if book_list.has_previous %}
-                                <li class="previous"><a
-                                        href="?typ={{ query_category }}&page={{ book_list.previous_page_number }}">上一页</a>
-                                </li>
-                            {% else %}
-                                <li class="previous disabled"><a href="#">上一页</a></li>
-                            {% endif %}
-                            第 {{ book_list.number }} / {{ book_list.paginator.num_pages }}页
-                            {% if book_list.has_next %}
-                                <li class="next">
-                                    <a href="?typ={{ query_category }}&page={{ book_list.next_page_number }}">下一页</a>
-                                </li>
-                            {% else %}
-                                <li class="next disabled"><a href="#">下一页</a></li>
-                            {% endif %}
-                        </ul>
-                    </nav>
+                    <!--<nav>-->
+                        <!--<ul class="pager">-->
+                            <!--{% if book_list.has_previous %}-->
+                                <!--<li class="previous"><a-->
+                                        <!--href="?typ={{ query_category }}&page={{ book_list.previous_page_number }}">上一页</a>-->
+                                <!--</li>-->
+                            <!--{% else %}-->
+                                <!--<li class="previous disabled"><a href="#">上一页</a></li>-->
+                            <!--{% endif %}-->
+                            <!--第 {{ book_list.number }} / {{ book_list.paginator.num_pages }}页-->
+                            <!--{% if book_list.has_next %}-->
+                                <!--<li class="next">-->
+                                    <!--<a href="?typ={{ query_category }}&page={{ book_list.next_page_number }}">下一页</a>-->
+                                <!--</li>-->
+                            <!--{% else %}-->
+                                <!--<li class="next disabled"><a href="#">下一页</a></li>-->
+                            <!--{% endif %}-->
+                        <!--</ul>-->
+                    <!--</nav>-->
 
             </div>
         </div>
@@ -93,5 +86,6 @@
     <script type="text/javascript">
         $('#id_category_{{ query_category }}').addClass("active");
     </script>
+
 
 {% endblock %}

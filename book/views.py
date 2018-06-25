@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from . import models
 from . import forms
+from itertools import chain
 
 # 主页
 def index(request):
@@ -139,10 +140,10 @@ def change_passwd(request):
                 return render(request, 'book/set_password.html', locals())
             else:
                 username = request.session.get('user_name')
+                print('username'+ username)
                 if request.session.get('permission'):
                     # 更新管理员 用户密码
                     admin = models.Administrator.objects.filter(adminname=username)
-                    print('admin'+ admin)
                     if admin:
                         passwd = models.Administrator.objects.filter(adminname=username, adminpasswd=password_old)
                         if passwd:
@@ -207,23 +208,38 @@ def view_book_list(request):
 def borrowed_list(request):
     if request.session.get('is_login'):
         borrower_id = request.session.get('user_id')
+        print('borrower_id:')
         print(borrower_id)
-        book_list = models.BookBorrow.objects.filter(user__userid = 1)
-        count = book_list.count()
-        if not count:
-            book_list = {}
-        paginator = Paginator(book_list, 5)
-        page = request.GET.get('page')
-        try:
-            book_list = paginator.page(page)
-        except PageNotAnInteger:
-            book_list = paginator.page(1)
-        except EmptyPage:
-            book_list = paginator.page(paginator.num_pages)
+        borrowbook_list = models.BookBorrow.objects.filter(user__userid=borrower_id)
+        count = borrowbook_list.count()
         content = {
-            'borrow_book_list': book_list,
+            "borrow_book_list": []
         }
+        if count:
+            sumlist = []
+            while count:
+                print("borrowbook_list:")
+                print(borrowbook_list)
+                user_list = models.User.objects.filter(bookborrow__user__userid=borrower_id)
+                print('user_list:')
+                print(user_list)
+                book_list = models.Book.objects.filter(bookborrow__user__userid=borrower_id)
+                print('book_list:')
+                print(book_list)
+                list_clone = list(chain(user_list, borrowbook_list, book_list))
+                print(list_clone)
+                for book in list_clone:
+                    print(book)
+                sumlist.append(list_clone)
+                count = count - 1
+            content = {
+                "borrow_book_list": sumlist
+            }
+            for book in sumlist:
+                print(book[0].userid)
+            return render(request, 'book/borrow_book.html', content)
         return render(request, 'book/borrow_book.html', content)
+
 
 
 
@@ -274,36 +290,22 @@ def add_book(request):
 # 删除图书 （管理员权限）
 
 def delete_book(request):
-    if request.session.get('permission'):
-        category_list = models.Book.objects.values_list('bookname', flat=True).distinct()
-        query_category = request.GET.get('book_name', 'all')
-        if (not query_category) or models.Book.objects.filter(bookname=query_category).count() is 0:
-            query_category = 'all'
-            book_list = models.Book.objects.all()
-        else:
-            book_list = models.Book.objects.filter(bookname=query_category)
+    bookid = request.GET.get('bookid')
+    if bookid:
+        print('bookid' + bookid)
+        delete_item = models.Book.objects.get(pk=bookid)
+        if delete_item:
+            models.Book.objects.get(pk=bookid).delete() # 级联删除数据
+            redirect("/delete_book/")
 
-        if request.method == 'POST':
-            keyword = request.POST.get('keyword', '')
-            book_list = models.Book.objects.filter(bookname=keyword)
-            query_category = 'all'
-
-        paginator = Paginator(book_list, 5)
-        page = request.GET.get('page')
-        try:
-            book_list = paginator.page(page)
-        except PageNotAnInteger:
-            book_list = paginator.page(1)
-        except EmptyPage:
-            book_list = paginator.page(paginator.num_pages)
-        content = {
-            'category_list': category_list,
-            'query_category': query_category,
-            'book_list': book_list,
-        }
-        return render(request, 'book/delete_book.html', content)
-    else:
-        return redirect("/index/")
+    book_list = models.Book.objects.all()
+    count = book_list.count()
+    if not count:
+        book_list = {}
+    content = {
+        'book_list': book_list,
+    }
+    return render(request, 'book/delete_book.html', content)
 
 
 # 修改图书信息(管理员权限）
@@ -344,7 +346,31 @@ def edit_book(request):
 # 删除用户（管理员权限）
 
 def deleteUser(request):
-    pass
+    userid = request.GET.get('userid')
+    if userid:
+        print('userid' + userid)
+        delete_item = models.User.objects.get(pk=userid)
+        if delete_item:
+            models.User.objects.get(pk=userid).delete() // 级联删除数据
+            redirect("/user_list/")
+
+    user_list = models.User.objects.all()
+    count = user_list.count()
+    if not count:
+        book_list = {}
+    paginator = Paginator(user_list, 5)
+    page = request.GET.get('page')
+    try:
+        user_list = paginator.page(page)
+    except PageNotAnInteger:
+        user_list = paginator.page(1)
+    except EmptyPage:
+        user_list = paginator.page(paginator.num_pages)
+    content = {
+        'user_list': user_list,
+    }
+    return render(request, 'book/user_list.html', content)
+
 
 
 # 查看已注册用户列表（管理员权限）

@@ -24,31 +24,23 @@
                         <tr>
                             <th>#</th>
                             <th>用户编号</th>
-                            <th>图书编号</th>
-                            <th>图书名称</th>
-                            <th>借书时间</th>
-                            <th>借书数量</th>
-                            {% if not requset.session.permission %}
-                            <th>还书操作</th>
-                            {% endif %}
+                            <th>用户姓名</th>
+                            <th>用户邮箱</th>
+                            <th>删除操作</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for book in borrow_book_list %}
+                        {% for user in user_list %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td></td>
-                                <td>{{ book.bookid }}</td>
-                                <td></td>
-                                <td>{{ book.borrowdate }}</td>
-                                <td>{{ book.borrownum }}</td>
-                                {% if not requset.session.permission %}
-                                <td><a class="btn primary-btn">还书</a></td>
-                                {% endif %}
+                                <td>{{ user.userid }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ book.usergender }}</td>
+                                <td><a class="btn btn-block btn-danger" href="?userid={{ user.userid }}">删除</a></td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td>未借图书</td>
+                                <td>无用户</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -56,17 +48,17 @@
 
                     <nav>
                         <ul class="pager">
-                            {% if borrow_book_list.has_previous %}
+                            {% if user_list.has_previous %}
                                 <li class="previous"><a
-                                        href="?typ={{ query_category }}&page={{ borrow_book_list.previous_page_number }}">上一页</a>
+                                        href="?typ={{ query_category }}&page={{ user_list.previous_page_number }}">上一页</a>
                                 </li>
                             {% else %}
                                 <li class="previous disabled"><a href="#">上一页</a></li>
                             {% endif %}
-                            第 {{ borrow_book_list.number }} / {{ borrow_book_list.paginator.num_pages }}页
-                            {% if borrow_book_list.has_next %}
+                            第 {{ user_list.number }} / {{ user_list.paginator.num_pages }}页
+                            {% if user_list.has_next %}
                                 <li class="next">
-                                    <a href="?typ={{ query_category }}&page={{ borrow_book_list.next_page_number }}">下一页</a>
+                                    <a href="?typ={{ query_category }}&page={{ user_list.next_page_number }}">下一页</a>
                                 </li>
                             {% else %}
                                 <li class="next disabled"><a href="#">下一页</a></li>

@@ -30,5 +30,6 @@ urlpatterns = [
     url(r'^change_passwd/', book_views.change_passwd),
     url(r'^add_book/', book_views.add_book),
     url(r'^borrow/', book_views.borrow),
-    url(r'^edit_book', book_views.edit_book)
+    url(r'^edit_book', book_views.edit_book),
+    url(r'^user_list/', book_views.deleteUser)
 ]
